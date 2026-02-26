@@ -1,0 +1,1 @@
+package com.dlms.chatservice;import org.springframework.web.bind.annotation.*;import java.util.*;@RestController public class HelloController { @GetMapping("/hello") public Map<String,Object> h(){ return Map.of("service","chat-service","status","ok"); } }

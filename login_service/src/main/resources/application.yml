@@ -1,0 +1,62 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: login-service
+
+  profiles:
+    active: default
+
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  cloud:
+    config:
+      fail-fast: false
+      retry:
+        max-attempts: 10
+        initial-interval: 3000
+
+  # ===========================
+  # MAIL CONFIG
+  # ===========================
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: raju.enagandula777@gmail.com
+    password: dvcy slce mdvw sgxv
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# ===========================
+# SMS CONFIG
+# ===========================
+sms:
+  twofactor:
+    apiKey: 917900fc-d45d-11f0-a6b2-0200cd936042
+
+# ===========================
+# LOGGING
+# ===========================
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web: DEBUG
+
+# ===========================
+# EUREKA CONFIG
+# ===========================
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka
+  instance:
+    prefer-ip-address: true

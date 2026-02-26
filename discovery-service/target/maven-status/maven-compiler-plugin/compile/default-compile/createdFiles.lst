@@ -1,0 +1,3 @@
+com\dlms\discoveryservice\Application.class
+com\dlms\discoveryservice\HelloController.class
+com\dlms\discoveryservice\EurekaServer.class

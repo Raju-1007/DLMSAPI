@@ -1,0 +1,138 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  # ===========================
+  # REDIS (Rate Limiter)
+  # ===========================
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000
+
+  cloud:
+    gateway:
+
+      # ===========================
+      # DEFAULT FILTERS (ALL ROUTES)
+      # ===========================
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 20
+            redis-rate-limiter.burstCapacity: 20
+            key-resolver: "#{@ipKeyResolver}"
+
+      # ===========================
+      # ROUTES
+      # ===========================
+      routes:
+
+        - id: content-service
+          uri: lb://content-service
+          predicates:
+            - Path=/content/**
+          filters:
+            - StripPrefix=1
+
+        - id: analytics-service
+          uri: lb://analytics-service
+          predicates:
+            - Path=/analytics/**
+          filters:
+            - StripPrefix=1
+
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notify/**
+          filters:
+            - StripPrefix=1
+
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+        - id: chat-service
+          uri: lb://chat-service
+          predicates:
+            - Path=/chat/**
+          filters:
+            - StripPrefix=1
+
+        - id: assessment-service
+          uri: lb://assessment-service
+          predicates:
+            - Path=/assessment/**
+          filters:
+            - StripPrefix=1
+
+        - id: course-service
+          uri: lb://course-service
+          predicates:
+            - Path=/course/**
+          filters:
+            - StripPrefix=1
+
+        - id: login-service
+          uri: lb://login-service
+          predicates:
+            - Path=/login/**
+          filters:
+            - StripPrefix=1
+
+        - id: progress-service
+          uri: lb://progress-service
+          predicates:
+            - Path=/progress/**
+          filters:
+            - StripPrefix=1
+
+      # ===========================
+      # GLOBAL CORS
+      # ===========================
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+# ===========================
+# EUREKA CONFIG
+# ===========================
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+
+# ===========================
+# LOGGING (DEBUG / TRACE)
+# ===========================
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.security.web.server: TRACE
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway.filter: TRACE
+    org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter: TRACE
+    org.springframework.cloud.gateway.filter.NettyRoutingFilter: TRACE
+    org.springframework.web.reactive.HandlerMapping: TRACE
+    reactor.netty.http.server: DEBUG
+    org.springframework.http.server.reactive: DEBUG

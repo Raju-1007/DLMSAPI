@@ -1,0 +1,92 @@
+version: "3.8"
+
+services:
+
+  discovery-service:
+    build: ./discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+
+  config-server:
+    build: ./DbConfig
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./config:/config
+    depends_on:
+      - discovery-service
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-service
+      - config-server
+
+  content-service:
+    build: ./content-service
+    container_name: content-service
+    ports:
+      - "9002:9002"
+    depends_on:
+      - discovery-service
+      - config-server
+      - mysql
+
+  analytics-service:
+    build: ./analytics-service
+    container_name: analytics-service
+    ports:
+      - "8088:8088"
+    depends_on:
+      - discovery-service
+      - config-server
+      - mysql
+
+  login-service:
+    build: ./login_service
+    container_name: login-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - discovery-service
+      - config-server
+      - mysql
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      - discovery-service
+      - config-server
+      - mysql
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api-gateway
+      - login-service
+      - content-service
+      - analytics-service
+      - notification-service
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: RaJu@1997
+      MYSQL_DATABASE: byjuice
+    ports:
+      - "3306:3306"
