@@ -2,10 +2,6 @@ pipeline {
 
     agent any
 
-    tools {
-        maven 'Maven3'
-    }
-
     environment {
         COMPOSE_FILE = 'docker-compose.yml'
     }
@@ -18,27 +14,21 @@ pipeline {
             }
         }
 
-        stage('Build Maven Project') {
-            steps {
-                sh 'mvn clean package -DskipTests'
-            }
-        }
-
         stage('Stop Old Containers') {
             steps {
-                sh 'docker-compose down || true'
+                bat 'docker-compose down'
             }
         }
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker-compose build'
+                bat 'docker-compose build'
             }
         }
 
         stage('Start Containers') {
             steps {
-                sh 'docker-compose up -d'
+                bat 'docker-compose up -d'
             }
         }
 
