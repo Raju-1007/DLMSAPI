@@ -72,8 +72,10 @@ public interface StudentDetailsRepo extends JpaRepository<StudentDetails, Long>{
 	);
 
 
-	@Query("SELECT s FROM StudentDetails s WHERE s.Studentid = :studentId")
-	Optional<StudentDetails> findByStudentid(@Param("studentId") Long studentId);
+	
+
+	@Query("SELECT s FROM StudentDetails s WHERE s.Studentid = :Studentid") 
+	Optional<StudentDetails> findByStudentid(@Param("studentId") Long Studentid);
 
 	
 	
