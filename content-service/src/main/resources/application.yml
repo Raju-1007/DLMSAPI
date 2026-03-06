@@ -8,6 +8,14 @@ spring:
   config:
     import: optional:configserver:http://config-server:8888
 
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 10
+        initial-interval: 2000
+        multiplier: 1.5
+
   servlet:
     multipart:
       enabled: true
@@ -20,7 +28,7 @@ logging:
     org.springframework.security: DEBUG
 
 minio:
-  url: http://localhost:9100
+  url: http://minio:9100
   access-key: raju123345
   secret-key: rju456789544
   bucket: lms12345
@@ -28,7 +36,7 @@ minio:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+      defaultZone: ${EUREKA_SERVER:http://discovery-service:8761/eureka}
 
   instance:
     prefer-ip-address: true

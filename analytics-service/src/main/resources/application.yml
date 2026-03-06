@@ -8,9 +8,18 @@ spring:
   config:
     import: optional:configserver:http://config-server:8888
 
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 10
+        initial-interval: 2000
+        multiplier: 1.5
+
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+      defaultZone: ${EUREKA_SERVER:http://discovery-service:8761/eureka}
+
   instance:
     prefer-ip-address: true
