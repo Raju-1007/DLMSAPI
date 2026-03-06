@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,9 +54,7 @@ import com.lms.login_service_interface.Teacher_Profile_Details_Repo;
 import com.lms.login_service_interface.VillageRepository;
 import com.lms.login_service_login_service.SmsService;
 
-import jakarta.annotation.PostConstruct;
 
-import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/login")
@@ -224,10 +223,6 @@ public class getDetails_Controller {
         return studentrepo.getStudentsBySchool(schoolId);
     }
 	
-	@PostConstruct
-	public void init() {
-	  System.out.println(":::::::::::::::::::::DistrictController LOADED:::::::::::::::::::::::::::::");
-	}
 	
 	@GetMapping("/getClassDetails/{studentId}")
 	public ResponseEntity<ClassDto> getClassByStudentId(
@@ -392,18 +387,36 @@ public class getDetails_Controller {
 	     return repo.save(user);
 	 }
 	 
+//	 
+//	 @GetMapping("/getUpdateProfileDetails")
+//	 public Optional<StudentDetails> getPendingTeacherUsers(@RequestParam  Long Studentid) {
+//		 Optional<StudentDetails> details=studentrepo.findByStudentId(Studentid);
+//		 return details;
+//		 
+//	 }
 	 
 	 @GetMapping("/getUpdateProfileDetails")
-	 public Optional<StudentDetails> getPendingTeacherUsers(@RequestParam  Long Studentid) {
-		 return studentrepo.findByStudentid(Studentid);
-		 
-	 }
+	    public ResponseEntity<?> removeProfileImage(
+	            @RequestParam Long Studentid) {
+
+	        StudentDetails student = studentrepo.findByStudentId(Studentid)
+	                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+	        if(student != null) {
+	        	return ResponseEntity.ok("Details Existed");
+	        }
+	        return  ResponseEntity.ok("Details not existed");
+	        
+	    }
 	 
 	 @GetMapping("/getdepartmentUpdateDetails")
 	 public Optional<Teacher_Profile_Details> getUpdateDepartmentDetails(@RequestParam  Long teacherId) {
 		 return teacher_Profile_Details_Repo.findByTeacherId(teacherId);
 		 
 	 }
+	 
+	 
+	 
 	 
 	 @GetMapping("/getTeacherUpdateDetails/{teacherId}")
 	 public List<Map<String, Object>> getTeacherUpDateDetails(

@@ -242,10 +242,12 @@ public class Login_controller {
 
 	@PostMapping("/refresh")
 	public ResponseEntity<?> refresh(@RequestBody Map<String, String> req) {
+		
+		System.out.println("Received Token: " + req.get("refreshToken"));
 
 		RefreshToken rt = refreshTokenService.verify(req.get("refreshToken"));
 		
-	    rt.setRevoked(false);
+	    rt.setRevoked(true);
 	    refreshrepo.save(rt);
 
 		LoginRoles user = rt.getLoginRoles();
@@ -255,7 +257,7 @@ public class Login_controller {
 		RefreshToken newRt =
 		        refreshTokenService.create(user);
 
-		return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+		return ResponseEntity.ok(Map.of("accessToken", newAccessToken,"refreshToken", newRt.getToken()));
 	}
 		
 	@PostMapping("/logout")
@@ -300,7 +302,7 @@ public ResponseEntity<?> updateProfile(@RequestBody Map<String, String> body) {
                 .orElseThrow(() -> new RuntimeException("Class not found"));
 
         Optional<StudentDetails> optionalStudent =
-                studentrepo.findByStudentid(studentId);
+                studentrepo.findByStudentId(studentId);
 
         StudentDetails student = optionalStudent.orElseGet(() -> {
             StudentDetails s = new StudentDetails();
@@ -429,7 +431,7 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> req) {
             @RequestParam Long studentId,
             @RequestParam MultipartFile file) throws IOException {
 
-        StudentDetails student = studentrepo.findByStudentid(studentId)
+        StudentDetails student = studentrepo.findByStudentId(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         String base64 = Base64.getEncoder()
@@ -443,7 +445,7 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> req) {
     @GetMapping("/getProfileImage")
     public ResponseEntity<?> getProfileImage(@RequestParam Long studentId){
 
-        StudentDetails student = studentrepo.findByStudentid(studentId)
+        StudentDetails student = studentrepo.findByStudentId(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         return ResponseEntity.ok(student.getProfileImage());
@@ -453,7 +455,7 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> req) {
     public ResponseEntity<?> removeProfileImage(
             @RequestParam Long studentId) {
 
-        StudentDetails student = studentrepo.findByStudentid(studentId)
+        StudentDetails student = studentrepo.findByStudentId(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         student.setProfileImage(null);
