@@ -7,6 +7,8 @@ services:
     container_name: discovery-service
     ports:
       - "8761:8761"
+    networks:
+      - dlms-network
 
   config-server:
     build: ./DbConfig
@@ -17,6 +19,8 @@ services:
       - ./config:/config
     depends_on:
       - discovery-service
+    networks:
+      - dlms-network
 
   api-gateway:
     build: ./api-gateway
@@ -26,6 +30,8 @@ services:
     depends_on:
       - discovery-service
       - config-server
+    networks:
+      - dlms-network
 
   content-service:
     build: ./content-service
@@ -36,6 +42,8 @@ services:
       - discovery-service
       - config-server
       - mysql
+    networks:
+      - dlms-network
 
   analytics-service:
     build: ./analytics-service
@@ -46,6 +54,8 @@ services:
       - discovery-service
       - config-server
       - mysql
+    networks:
+      - dlms-network
 
   login-service:
     build: ./login_service
@@ -56,6 +66,8 @@ services:
       - discovery-service
       - config-server
       - mysql
+    networks:
+      - dlms-network
 
   notification-service:
     build: ./notification-service
@@ -66,6 +78,8 @@ services:
       - discovery-service
       - config-server
       - mysql
+    networks:
+      - dlms-network
 
   nginx:
     image: nginx:latest
@@ -80,6 +94,8 @@ services:
       - content-service
       - analytics-service
       - notification-service
+    networks:
+      - dlms-network
 
   mysql:
     image: mysql:8.0
@@ -102,3 +118,4 @@ volumes:
 
 networks:
   dlms-network:
+    driver: bridge
