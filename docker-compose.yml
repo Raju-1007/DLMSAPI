@@ -88,5 +88,17 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: RaJu@1997
       MYSQL_DATABASE: byjuice
+      MYSQL_USER: lmsuser
+      MYSQL_PASSWORD: RaJu@1997
+    volumes:
+      - mysql-data:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - dlms-network
+
+volumes:
+  mysql-data:
+
+networks:
+  dlms-network:
